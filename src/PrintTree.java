@@ -32,6 +32,28 @@ public class PrintTree {
         while (current.size() > 0){
             node = current.remove(current.size()-1);
 
+            if (flag == 0){
+                if (node.left != null){
+                    reverse.add(node.left);
+                }
+                if (node.right != null){
+                    reverse.add(node.right);
+                }
+            }else {
+                if (node.right != null){
+                    reverse.add(node.right);
+                }
+                if (node.left != null){
+                    reverse.add(node.left);
+                }
+            }
+            if (current.size()==0){
+                flag = 1-flag;
+                LinkedList<TreeNode> tmp = current;
+                current = reverse;
+                reverse = tmp;
+                System.out.println();
+            }
         }
 
         return lists;

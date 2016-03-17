@@ -10,7 +10,53 @@
  */
 public class Match {
     public boolean match(char[] str, char[] pattern) {
-
-        return true;
+        if (str == null || pattern == null) {
+            return false;
+        }
+        return matchCore(String.valueOf(str), 0, String.valueOf(pattern), 0);
+    }
+    private boolean matchCore(String input, int i, String pattern, int p) {
+        // 匹配串和模式串都到达尾，说明成功匹配
+        if (i >= input.length() && p >= pattern.length()) {
+            return true;
+        }
+        // 只有模式串到达结尾，说明匹配失败
+        if (i != input.length() && p >= pattern.length()) {
+            return false;
+        }
+        // 模式串未结束，匹配串有可能结束有可能未结束
+        // p位置的下一个字符中为*号
+        if (p + 1 < pattern.length() && pattern.charAt(p + 1) == '*') {
+            // 匹配串已经结束
+            if (i >= input.length()) {
+                return matchCore(input, i, pattern, p + 2);
+            }
+            // 匹配串还没有结束
+            else {
+                if (pattern.charAt(p) == input.charAt(i) || pattern.charAt(p) == '.') {
+                    return
+                            // 匹配串向后移动一个位置，模式串向后移动两个位置
+                            matchCore(input, i + 1, pattern, p + 2)
+                                    // 匹配串向后移动一个位置，模式串不移动
+                                    || matchCore(input, i + 1, pattern, p)
+                                    // 匹配串不移动，模式串向后移动两个位置
+                                    || matchCore(input, i, pattern, p + 2);
+                } else {
+                    return matchCore(input, i, pattern, p + 2);
+                }
+            }
+        }
+        //
+        // 匹配串已经结束
+        if (i >= input.length()) {
+            return false;
+        }
+        // 匹配串还没有结束
+        else {
+            if (input.charAt(i) == pattern.charAt(p) || pattern.charAt(p) == '.') {
+                return matchCore(input, i + 1, pattern, p + 1);
+            }
+        }
+        return false;
     }
 }
