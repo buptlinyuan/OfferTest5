@@ -4,6 +4,7 @@
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * 题目描述;
@@ -13,9 +14,9 @@ public class PrintTree {
 
     /**
      * 解题思路:
-     * 按之字形顺序打印二叉树需要两个栈。我们在打印某一行结点时，把下一层的子结点保存到相应的栈里。
-     * 如果当前打印的是奇数层，则先保存左子结点再保存右子结点到一个栈里；
-     * 如果当前打印的是偶数层，则先保存右子结点再保存左子结点到第二个栈里。
+     * 先进行层序遍历;
+     * 在遍历每一层的时候看这一层是否需要从右往左打印;
+     *
      */
 
     public ArrayList<ArrayList<Integer>> Print(TreeNode pRoot) {
@@ -23,39 +24,47 @@ public class PrintTree {
         if (pRoot == null){
             return lists;
         }
-        LinkedList<TreeNode> current = new LinkedList<TreeNode>();
-        LinkedList<TreeNode> reverse = new LinkedList<TreeNode>();
+        boolean leftToRight = true;
+        Queue<TreeNode> layer = new LinkedList<TreeNode>();
+        ArrayList<Integer> layerList = new ArrayList<Integer>();
+        layer.add(pRoot);
+        int start = 0,end = 1;
 
-        int flag = 0;
-        TreeNode node;
-        current.add(pRoot);
-        while (current.size() > 0){
-            node = current.remove(current.size()-1);
-
-            if (flag == 0){
-                if (node.left != null){
-                    reverse.add(node.left);
-                }
-                if (node.right != null){
-                    reverse.add(node.right);
-                }
-            }else {
-                if (node.right != null){
-                    reverse.add(node.right);
-                }
-                if (node.left != null){
-                    reverse.add(node.left);
-                }
+        while (layer.size() > 0){
+            TreeNode cur = layer.remove();
+            layerList.add(cur.val);
+            start++;
+            if (cur.left != null){
+                layer.add(cur.left);
             }
-            if (current.size()==0){
-                flag = 1-flag;
-                LinkedList<TreeNode> tmp = current;
-                current = reverse;
-                reverse = tmp;
-                System.out.println();
+
+            if (cur.right != null){
+                layer.add(cur.right);
+            }
+
+            if (start == end){
+                end = layer.size();
+                start = 0;
+                if (!leftToRight){
+                    lists.add(reverse(layerList));
+                }else {
+                    lists.add(layerList);
+                }
+
+                leftToRight = !leftToRight;
+                layerList = new ArrayList<Integer>();
             }
         }
 
         return lists;
+    }
+
+    private  ArrayList reverse(ArrayList<Integer> layerlist){
+        int length = layerlist.size();
+        ArrayList<Integer> reverseList = new ArrayList<Integer>();
+        for (int i=length-1;i>=0;i--){
+            reverseList.add(layerlist.get(i));
+        }
+        return reverseList;
     }
 }
