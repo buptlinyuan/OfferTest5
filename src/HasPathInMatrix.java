@@ -13,83 +13,64 @@
  * a d e e
  * 矩阵中包含一条字符串"bcced"的路径，但是矩阵中不包含"abcb"路径，
  * 因为字符串的第一个字符b占据了矩阵中的第一行第二个格子之后，路径不能再次进入该格子。
+ *
+ * ABCE
+ * SFCS
+ * ADEE
  */
 public class HasPathInMatrix {
+
     /**
-     *
-     * @param matrix 输入矩阵
-     * @param rows 矩阵行数
-     * @param cols 矩阵列数
-     * @param str 要搜索的字符串
-     * @return 是否找到 true/false;
+     * 解题思路:
+     * 使用矩阵某个外围位置开始,上下左右进行遍历查找,看是否能够匹配得到需要查找的字符串;
      */
-    public boolean hasPath(char[] matrix, int rows, int cols, char[] str) {
-
-        if (matrix == null || matrix.length != rows*cols || str ==null||str.length<1){
-            return  false;
-        }
-
-        boolean[] visited = new boolean[rows*cols];
-        for (int i=0;i<visited.length;i++){
-            visited[i] = false;
-        }
-        //记录结果的数组
-        int[] pathLength = {0};
-        for (int i=0;i<rows;i++){
-            for (int j=0;j<rows;j++){
-                if (hasPathCore(matrix,rows,cols,str,visited,i,j,pathLength)){
+    public static boolean hasPath(char[] matrix, int rows, int cols, char[] str)
+    {
+        int flag[] = new int[matrix.length];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (helper(matrix, rows, cols, i, j, str, 0, flag))
                     return true;
-                }
             }
         }
-
         return false;
     }
 
     /**
-     * 回溯搜索法
+     * 回溯法进行递归;
      *
-     * @param matrix 输入矩阵
-     * @param rows 矩阵行数
-     * @param cols 矩阵列数
-     * @param str 要搜索的字符串
-     * @param visited 访问标记数组
-     * @param row 当前处理的行号
-     * @param col 当前处理的列号
-     * @param pathLength 已经处理的str中字符个数
-     * @return 是否找到
+     * @param matrix 矩阵
+     * @param rows 矩阵行
+     * @param cols 矩阵列
+     * @param i 当前行
+     * @param j 当前列
+     * @param str 当前字符串
+     * @param k 目前匹配字符串位置
+     * @param flag
+     * @return
      */
-    private static boolean hasPathCore(char[] matrix, int rows, int cols, char[] str, boolean[] visited,
-                                       int row, int col, int[] pathLength){
-        if (pathLength[0] == str.length) {
+    private static boolean helper(char[] matrix, int rows, int cols, int i, int j, char[] str, int k, int[] flag) {
+        int index = i * cols + j;
+        if (i < 0 || i >= rows || j < 0 || j >= cols || matrix[index] != str[k] || flag[index] == 1)
+            return false;
+        if(k == str.length - 1) return true;
+        flag[index] = 1;
+
+        if (helper(matrix, rows, cols, i - 1, j, str, k + 1, flag)
+                || helper(matrix, rows, cols, i + 1, j, str, k + 1, flag)
+                || helper(matrix, rows, cols, i, j - 1, str, k + 1, flag)
+                || helper(matrix, rows, cols, i, j + 1, str, k + 1, flag)) {
+
             return true;
         }
+        flag[index] = 0;
+        return false;
+    }
 
-        boolean hasPath = false;
+    public static void main(String[] args) {
+        char[] array = {'a','b', 'c','e','s','f','c','s','a','d','e','e'};
+        System.out.println(hasPath("ABCESFCSADEE".toCharArray(),3,4,"SEE".toCharArray()));
 
-        // 判断位置是否合法
-        if (row >= 0 && row < rows
-                && col >= 0 && col < cols
-                && matrix[row * cols + col] == str[pathLength[0]]
-                && !visited[row * cols + col]) {
-
-            visited[row * cols + col] = true;
-            pathLength[0]++;
-
-            // 按左上右下进行回溯
-            hasPath = hasPathCore(matrix, rows, cols, str, visited, row, col - 1, pathLength)
-                    || hasPathCore(matrix, rows, cols, str, visited, row - 1, col, pathLength)
-                    || hasPathCore(matrix, rows, cols, str, visited, row, col + 1, pathLength)
-                    || hasPathCore(matrix, rows, cols, str, visited, row + 1, col, pathLength);
-
-            if (!hasPath) {
-                pathLength[0]--;
-                visited[row * cols + col] = false;
-            }
-
-        }
-
-        return hasPath;
     }
 
 
