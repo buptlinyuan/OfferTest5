@@ -14,6 +14,7 @@ import java.util.Arrays;
  * {2,3,4,[2,6,2],5,1}， {2,3,4,2,[6,2,5],1}， {2,3,4,2,6,[2,5,1]}。
  */
 public class MaxInWindows {
+    
     public ArrayList<Integer> maxInWindows(int [] num, int size) {
         ArrayList<Integer> list = new ArrayList<Integer>();
         if(size == 0){

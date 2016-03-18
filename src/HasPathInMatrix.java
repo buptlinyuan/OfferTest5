@@ -22,7 +22,7 @@ public class HasPathInMatrix {
 
     /**
      * 解题思路:
-     * 使用矩阵某个外围位置开始,上下左右进行遍历查找,看是否能够匹配得到需要查找的字符串;
+     * 从矩阵某个外围位置开始,上下左右进行遍历查找,看是否能够匹配得到需要查找的字符串;
      */
     public static boolean hasPath(char[] matrix, int rows, int cols, char[] str)
     {
